@@ -1,2 +1,1 @@
-# terraform-provider-persondb-plugin-framework
-Test provider based on Terraform Plugin Framework
+# Test provider based on Terraform Plugin Framework
