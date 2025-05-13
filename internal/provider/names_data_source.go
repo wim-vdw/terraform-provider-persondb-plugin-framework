@@ -18,7 +18,7 @@ type namesDataSourceModel struct {
 	Names []namesModel `tfsdk:"names"`
 }
 
-// namesModel maps coffees schema data.
+// namesModel maps names schema data.
 type namesModel struct {
 	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
@@ -29,7 +29,7 @@ func NewNamesDataSource() datasource.DataSource {
 	return &namesDataSource{}
 }
 
-// coffeesDataSource is the data source implementation.
+// namesDataSource is the data source implementation.
 type namesDataSource struct{}
 
 // Metadata returns the data source type name.
