@@ -29,8 +29,6 @@ func New(version string) func() provider.Provider {
 // persondbProviderModel maps provider schema data to a Go type.
 type persondbProviderModel struct {
 	Database types.String `tfsdk:"database_filename"`
-	Username types.String `tfsdk:"username"`
-	Password types.String `tfsdk:"password"`
 }
 
 // persondbProvider is the provider implementation.
@@ -52,12 +50,6 @@ func (p *persondbProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"database_filename": schema.StringAttribute{
-				Optional: true,
-			},
-			"username": schema.StringAttribute{
-				Optional: true,
-			},
-			"password": schema.StringAttribute{
 				Optional: true,
 			},
 		},
