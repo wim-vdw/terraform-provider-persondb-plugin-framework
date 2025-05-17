@@ -2,11 +2,14 @@ package provider
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -21,6 +24,13 @@ func New(version string) func() provider.Provider {
 			version: version,
 		}
 	}
+}
+
+// persondbProviderModel maps provider schema data to a Go type.
+type persondbProviderModel struct {
+	Database types.String `tfsdk:"database_filename"`
+	Username types.String `tfsdk:"username"`
+	Password types.String `tfsdk:"password"`
 }
 
 // persondbProvider is the provider implementation.
@@ -39,11 +49,67 @@ func (p *persondbProvider) Metadata(_ context.Context, _ provider.MetadataReques
 
 // Schema defines the provider-level schema for configuration data.
 func (p *persondbProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"database_filename": schema.StringAttribute{
+				Optional: true,
+			},
+			"username": schema.StringAttribute{
+				Optional: true,
+			},
+			"password": schema.StringAttribute{
+				Optional: true,
+			},
+		},
+	}
 }
 
 // Configure prepares a PersonDB API client for data sources and resources.
 func (p *persondbProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	// Retrieve provider data from configuration
+	var config persondbProviderModel
+	diags := req.Config.Get(ctx, &config)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// If practitioner provided a configuration value for any of the
+	// attributes, it must be a known value.
+	if config.Database.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("database_filename"),
+			"Unknown Persons Database filename",
+			"The provider cannot create the Persons DB API client as there is an unknown configuration value for the Database filename. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the CUSTOM_DATABASE_FILENAME environment variable.",
+		)
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Default values to environment variables, but override
+	// with Terraform configuration value if set.
+	database := os.Getenv("CUSTOM_DATABASE_FILENAME")
+
+	if !config.Database.IsNull() {
+		database = config.Database.ValueString()
+	}
+
+	if database == "" {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("database_filename"),
+			"Missing Persons Database filename",
+			"The provider cannot create the Persons DB API client as there is a missing or empty value for the Database filename. "+
+				"Set the database_filename value in the configuration or use the CUSTOM_DATABASE_FILENAME environment variable. "+
+				"If either is already set, ensure the value is not empty.",
+		)
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
 // DataSources defines the data sources implemented in the provider.
