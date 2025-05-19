@@ -2,10 +2,12 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	persondbclient "github.com/wim-vdw/terraform-provider-persondb-plugin-framework/internal/client"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -14,12 +16,9 @@ var (
 )
 
 // namesDataSourceModel maps the data source schema data.
-type namesDataSourceModel struct {
-	Names []namesModel `tfsdk:"names"`
-}
-
-// namesModel maps names schema data.
-type namesModel struct {
+type nameDataSourceModel struct {
+	ID        types.String `tfsdk:"id"`
+	PersonID  types.String `tfsdk:"person_id"`
 	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
 }
@@ -30,7 +29,9 @@ func NewNamesDataSource() datasource.DataSource {
 }
 
 // namesDataSource is the data source implementation.
-type namesDataSource struct{}
+type namesDataSource struct {
+	client *persondbclient.Client
+}
 
 // Metadata returns the data source type name.
 func (d *namesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -41,18 +42,17 @@ func (d *namesDataSource) Metadata(_ context.Context, req datasource.MetadataReq
 func (d *namesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"names": schema.ListNestedAttribute{
+			"id": schema.StringAttribute{
 				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"first_name": schema.StringAttribute{
-							Computed: true,
-						},
-						"last_name": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
+			},
+			"person_id": schema.StringAttribute{
+				Required: true,
+			},
+			"first_name": schema.StringAttribute{
+				Computed: true,
+			},
+			"last_name": schema.StringAttribute{
+				Computed: true,
 			},
 		},
 	}
@@ -60,14 +60,27 @@ func (d *namesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 
 // Read refreshes the Terraform state with the latest data.
 func (d *namesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state namesDataSourceModel
+	var state nameDataSourceModel
 
-	wim := namesModel{
-		FirstName: types.StringValue("Wim"),
-		LastName:  types.StringValue("Van den Wyngaert"),
+	// Read Terraform configuration data into the model
+	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	state.Names = append(state.Names, wim)
+	personID := state.PersonID.ValueString()
+	lastName, firstName, err := d.client.ReadPerson(personID)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to Read Person from the database",
+			err.Error(),
+		)
+		return
+	}
+
+	state.ID = types.StringValue("/person/" + personID)
+	state.FirstName = types.StringValue(firstName)
+	state.LastName = types.StringValue(lastName)
 
 	// Set state
 	diags := resp.State.Set(ctx, &state)
@@ -75,4 +88,25 @@ func (d *namesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+}
+
+// Configure adds the provider configured client to the data source.
+func (d *namesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	// Add a nil check when handling ProviderData because Terraform
+	// sets that data after it calls the ConfigureProvider RPC.
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*persondbclient.Client)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Data Source Configure Type",
+			fmt.Sprintf("Expected *persondbclient.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	d.client = client
 }

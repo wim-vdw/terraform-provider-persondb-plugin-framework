@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	persondbclient "github.com/wim-vdw/terraform-provider-persondb-plugin-framework/internal/client"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -102,6 +103,21 @@ func (p *persondbProvider) Configure(ctx context.Context, req provider.Configure
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	client, err := persondbclient.NewClient(database)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to Create Persons DB API Client",
+			"An unexpected error occurred when creating the Persons DB API Client. "+
+				"If the error is not clear, please contact the provider developers.\n\n"+
+				"Persons DB API Client Error: "+err.Error(),
+		)
+		return
+	}
+
+	// Make the Persons DB API client available during DataSource and Resource
+	// type Configure methods.
+	resp.DataSourceData = client
 }
 
 // DataSources defines the data sources implemented in the provider.

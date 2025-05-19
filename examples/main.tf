@@ -6,10 +6,14 @@ terraform {
   }
 }
 
-provider "persondb" {}
+provider "persondb" {
+  database_filename = "persons.db"
+}
 
-data "persondb_names" "test" {}
+data "persondb_names" "wim" {
+  person_id = "1"
+}
 
 output "test" {
-  value = data.persondb_names.test
+  value = data.persondb_names.wim
 }
