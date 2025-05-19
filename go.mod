@@ -2,7 +2,10 @@ module github.com/wim-vdw/terraform-provider-persondb-plugin-framework
 
 go 1.24
 
-require github.com/hashicorp/terraform-plugin-framework v1.14.1
+require (
+	github.com/hashicorp/terraform-plugin-framework v1.14.1
+	github.com/mattn/go-sqlite3 v1.14.28
+)
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
