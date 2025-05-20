@@ -10,10 +10,10 @@ provider "persondb" {
   database_filename = "persons.db"
 }
 
-data "persondb_names" "wim" {
+data "persondb_person" "wim" {
   person_id = "1"
 }
 
 output "test" {
-  value = data.persondb_names.wim
+  value = data.persondb_person.wim
 }
