@@ -19,8 +19,8 @@ var (
 type nameDataSourceModel struct {
 	ID        types.String `tfsdk:"id"`
 	PersonID  types.String `tfsdk:"person_id"`
-	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
+	FirstName types.String `tfsdk:"first_name"`
 }
 
 // NewNamesDataSource is a helper function to simplify the provider implementation.
@@ -48,10 +48,10 @@ func (d *namesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 			"person_id": schema.StringAttribute{
 				Required: true,
 			},
-			"first_name": schema.StringAttribute{
+			"last_name": schema.StringAttribute{
 				Computed: true,
 			},
-			"last_name": schema.StringAttribute{
+			"first_name": schema.StringAttribute{
 				Computed: true,
 			},
 		},
@@ -79,8 +79,8 @@ func (d *namesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	}
 
 	state.ID = types.StringValue("/person/" + personID)
-	state.FirstName = types.StringValue(firstName)
 	state.LastName = types.StringValue(lastName)
+	state.FirstName = types.StringValue(firstName)
 
 	// Set state
 	diags := resp.State.Set(ctx, &state)
