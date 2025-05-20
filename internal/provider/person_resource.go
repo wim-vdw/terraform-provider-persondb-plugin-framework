@@ -159,18 +159,14 @@ func (r *PersonResource) Read(ctx context.Context, req resource.ReadRequest, res
 	personID := parts[2]
 	lastName, firstName, err := r.client.ReadPerson(personID)
 	if err != nil {
-		// Person could not be found, so we set the ID to empty
-		data.ID = types.StringValue("")
-		//resp.Diagnostics.AddError(
-		//	"Error reading person",
-		//	"Could not read person, unexpected error: "+err.Error(),
-		//)
-		//return
-	} else {
-		data.PersonID = types.StringValue(personID)
-		data.LastName = types.StringValue(lastName)
-		data.FirstName = types.StringValue(firstName)
+		// Person could not be found, so we call the RemoveResource method to enforce new resource creation
+		resp.State.RemoveResource(ctx)
+		return
 	}
+
+	data.PersonID = types.StringValue(personID)
+	data.LastName = types.StringValue(lastName)
+	data.FirstName = types.StringValue(firstName)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

@@ -72,8 +72,8 @@ func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	lastName, firstName, err := d.client.ReadPerson(personId)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to Read Person from the database",
-			err.Error(),
+			"Error reading person",
+			"Could not read person, unexpected error: "+err.Error(),
 		)
 		return
 	}
