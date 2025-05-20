@@ -12,34 +12,34 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &NamesResource{}
-var _ resource.ResourceWithImportState = &NamesResource{}
+var _ resource.Resource = &PersonResource{}
+var _ resource.ResourceWithImportState = &PersonResource{}
 
-// NewNamesResource is a helper function to simplify the provider implementation.
-func NewNamesResource() resource.Resource {
-	return &NamesResource{}
+// NewPersonResource is a helper function to simplify the provider implementation.
+func NewPersonResource() resource.Resource {
+	return &PersonResource{}
 }
 
-// NamesResource is the resource implementation.
-type NamesResource struct {
+// PersonResource is the resource implementation.
+type PersonResource struct {
 	client *persondbclient.Client
 }
 
-// NamesResourceModel maps the resource schema data.
-type NamesResourceModel struct {
-	ID        types.String `tfsdk:"id"`
+// PersonResourceModel maps the resource schema data.
+type PersonResourceModel struct {
+	Id        types.String `tfsdk:"id"`
 	PersonID  types.String `tfsdk:"person_id"`
 	LastName  types.String `tfsdk:"last_name"`
 	FirstName types.String `tfsdk:"first_name"`
 }
 
 // Metadata returns the resource type name.
-func (r *NamesResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_names"
+func (r *PersonResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_person"
 }
 
 // Schema defines the schema for the resource.
-func (r *NamesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *PersonResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -58,7 +58,7 @@ func (r *NamesResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 	}
 }
 
-func (r *NamesResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *PersonResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -77,8 +77,8 @@ func (r *NamesResource) Configure(ctx context.Context, req resource.ConfigureReq
 	r.client = client
 }
 
-func (r *NamesResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data NamesResourceModel
+func (r *PersonResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data PersonResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -97,7 +97,7 @@ func (r *NamesResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
-	data.ID = types.StringValue("example-id")
+	data.Id = types.StringValue("example-id")
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log
@@ -107,8 +107,8 @@ func (r *NamesResource) Create(ctx context.Context, req resource.CreateRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *NamesResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data NamesResourceModel
+func (r *PersonResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data PersonResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -129,8 +129,8 @@ func (r *NamesResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *NamesResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data NamesResourceModel
+func (r *PersonResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data PersonResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -151,8 +151,8 @@ func (r *NamesResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *NamesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data NamesResourceModel
+func (r *PersonResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data PersonResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -170,6 +170,6 @@ func (r *NamesResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// }
 }
 
-func (r *NamesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *PersonResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

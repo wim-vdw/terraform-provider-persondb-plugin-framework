@@ -12,21 +12,21 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ datasource.DataSource = &NamesDataSource{}
+	_ datasource.DataSource = &PersonDataSource{}
 )
 
-// NewNamesDataSource is a helper function to simplify the provider implementation.
-func NewNamesDataSource() datasource.DataSource {
-	return &NamesDataSource{}
+// NewPersonDataSource is a helper function to simplify the provider implementation.
+func NewPersonDataSource() datasource.DataSource {
+	return &PersonDataSource{}
 }
 
-// NamesDataSource is the data source implementation.
-type NamesDataSource struct {
+// PersonDataSource is the data source implementation.
+type PersonDataSource struct {
 	client *persondbclient.Client
 }
 
-// NamesDataSourceModel maps the data source schema data.
-type NamesDataSourceModel struct {
+// PersonDataSourceModel maps the data source schema data.
+type PersonDataSourceModel struct {
 	Id        types.String `tfsdk:"id"`
 	PersonId  types.String `tfsdk:"person_id"`
 	LastName  types.String `tfsdk:"last_name"`
@@ -34,12 +34,12 @@ type NamesDataSourceModel struct {
 }
 
 // Metadata returns the data source type name.
-func (d *NamesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_names"
+func (d *PersonDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_person"
 }
 
 // Schema defines the schema for the data source.
-func (d *NamesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *PersonDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -59,8 +59,8 @@ func (d *NamesDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 }
 
 // Read refreshes the Terraform state with the latest data.
-func (d *NamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data NamesDataSourceModel
+func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data PersonDataSourceModel
 
 	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -91,7 +91,7 @@ func (d *NamesDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 }
 
 // Configure adds the provider configured client to the data source.
-func (d *NamesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *PersonDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Add a nil check when handling ProviderData because Terraform
 	// sets that data after it calls the ConfigureProvider RPC.
 	if req.ProviderData == nil {
