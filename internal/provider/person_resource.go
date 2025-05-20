@@ -54,6 +54,9 @@ func (r *PersonResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			},
 			"person_id": schema.StringAttribute{
 				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"first_name": schema.StringAttribute{
 				Optional: true,
@@ -99,7 +102,7 @@ func (r *PersonResource) Create(ctx context.Context, req resource.CreateRequest,
 	lastName := data.LastName.ValueString()
 	firstName := data.FirstName.ValueString()
 
-	// Check if the person already exists
+	// Check if the person already exists, if yes return a message the resource already exists and needs to be imported
 	exists, err := r.client.CheckPersonExists(personID)
 	if err != nil {
 		resp.Diagnostics.AddError(
