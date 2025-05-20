@@ -10,10 +10,8 @@ provider "persondb" {
   database_filename = "persons.db"
 }
 
-data "persondb_person" "wim" {
-  person_id = "1"
-}
-
-output "test" {
-  value = data.persondb_person.wim
+resource "persondb_person" "wim" {
+  person_id  = "1"
+  last_name  = "Van den Wyngaert"
+  first_name = "Wim"
 }

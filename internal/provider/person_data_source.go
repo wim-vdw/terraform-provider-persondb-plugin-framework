@@ -27,8 +27,8 @@ type PersonDataSource struct {
 
 // PersonDataSourceModel maps the data source schema data.
 type PersonDataSourceModel struct {
-	Id        types.String `tfsdk:"id"`
-	PersonId  types.String `tfsdk:"person_id"`
+	ID        types.String `tfsdk:"id"`
+	PersonID  types.String `tfsdk:"person_id"`
 	LastName  types.String `tfsdk:"last_name"`
 	FirstName types.String `tfsdk:"first_name"`
 }
@@ -68,7 +68,7 @@ func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	personId := data.PersonId.ValueString()
+	personId := data.PersonID.ValueString()
 	lastName, firstName, err := d.client.ReadPerson(personId)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -78,7 +78,7 @@ func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	data.Id = types.StringValue("/person/" + personId)
+	data.ID = types.StringValue("/person/" + personId)
 	data.LastName = types.StringValue(lastName)
 	data.FirstName = types.StringValue(firstName)
 
