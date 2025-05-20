@@ -118,6 +118,7 @@ func (p *persondbProvider) Configure(ctx context.Context, req provider.Configure
 	// Make the Persons DB API client available during DataSource and Resource
 	// type Configure methods.
 	resp.DataSourceData = client
+	resp.ResourceData = client
 }
 
 // DataSources defines the data sources implemented in the provider.
@@ -129,5 +130,7 @@ func (p *persondbProvider) DataSources(_ context.Context) []func() datasource.Da
 
 // Resources defines the resources implemented in the provider.
 func (p *persondbProvider) Resources(_ context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		NewNamesResource,
+	}
 }
