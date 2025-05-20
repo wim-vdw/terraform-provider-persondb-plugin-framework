@@ -15,14 +15,6 @@ var (
 	_ datasource.DataSource = &NamesDataSource{}
 )
 
-// NamesDataSourceModel maps the data source schema data.
-type NamesDataSourceModel struct {
-	Id        types.String `tfsdk:"id"`
-	PersonId  types.String `tfsdk:"person_id"`
-	LastName  types.String `tfsdk:"last_name"`
-	FirstName types.String `tfsdk:"first_name"`
-}
-
 // NewNamesDataSource is a helper function to simplify the provider implementation.
 func NewNamesDataSource() datasource.DataSource {
 	return &NamesDataSource{}
@@ -31,6 +23,14 @@ func NewNamesDataSource() datasource.DataSource {
 // NamesDataSource is the data source implementation.
 type NamesDataSource struct {
 	client *persondbclient.Client
+}
+
+// NamesDataSourceModel maps the data source schema data.
+type NamesDataSourceModel struct {
+	Id        types.String `tfsdk:"id"`
+	PersonId  types.String `tfsdk:"person_id"`
+	LastName  types.String `tfsdk:"last_name"`
+	FirstName types.String `tfsdk:"first_name"`
 }
 
 // Metadata returns the data source type name.
