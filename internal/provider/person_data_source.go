@@ -81,7 +81,7 @@ func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	data.ID = types.StringValue("/person/" + personId)
 	data.LastName = types.StringValue(lastName)
 
-	// Only set first name if it is not empty
+	// Only set first name in state if it is not empty from the database (optional field)
 	if firstName != "" {
 		data.FirstName = types.StringValue(firstName)
 	}
