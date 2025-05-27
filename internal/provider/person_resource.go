@@ -177,14 +177,13 @@ func (r *PersonResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	data.PersonID = types.StringValue(personID)
 	data.LastName = types.StringValue(lastName)
-	data.FirstName = types.StringValue(firstName)
 
 	// Check if firstName is empty and set it to null if it is (because it is optional)
-	//if data.FirstName.ValueString() == "" {
-	//	data.FirstName = types.StringNull()
-	//} else {
-	//	data.FirstName = types.StringValue(firstName)
-	//}
+	if firstName == "" {
+		data.FirstName = types.StringNull()
+	} else {
+		data.FirstName = types.StringValue(firstName)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
