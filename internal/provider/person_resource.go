@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -68,6 +69,8 @@ func (r *PersonResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			},
 			"first_name": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
+				Default:  stringdefault.StaticString(""),
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
 				},
@@ -177,13 +180,14 @@ func (r *PersonResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	data.PersonID = types.StringValue(personID)
 	data.LastName = types.StringValue(lastName)
+	data.FirstName = types.StringValue(firstName)
 
 	// Check if firstName is empty and set it to null if it is (because it is optional)
-	if firstName == "" {
-		data.FirstName = types.StringNull()
-	} else {
-		data.FirstName = types.StringValue(firstName)
-	}
+	//if firstName == "" {
+	//	data.FirstName = types.StringNull()
+	//} else {
+	//	data.FirstName = types.StringValue(firstName)
+	//}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
