@@ -80,13 +80,14 @@ func (d *PersonDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	data.ID = types.StringValue("/person/" + personId)
 	data.LastName = types.StringValue(lastName)
+	data.FirstName = types.StringValue(firstName)
 
 	// Check if firstName is empty and set it to null if it is (because it is optional)
-	if firstName == "" {
-		data.FirstName = types.StringNull()
-	} else {
-		data.FirstName = types.StringValue(firstName)
-	}
+	//if firstName == "" {
+	//	data.FirstName = types.StringNull()
+	//} else {
+	//	data.FirstName = types.StringValue(firstName)
+	//}
 
 	// Set data
 	diags := resp.State.Set(ctx, &data)
