@@ -34,7 +34,7 @@ $env:CGO_ENABLED=1; go build -o local_dev_build/terraform-provider-persondb.exe
 
 ## Run the local development tests with the Terraform CLI
 
-Make sure you are located in the `examples` directory.  
+Make sure you are located in the `local_tests` directory.  
 File `terraformrc-local-dev` contains the Terraform CLI dev configuration overrides for the local development tests.  
 File `main.tf` contains the Terraform configuration for the local development tests.
 
