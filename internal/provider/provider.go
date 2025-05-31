@@ -51,7 +51,8 @@ func (p *persondbProvider) Schema(_ context.Context, _ provider.SchemaRequest, r
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"database_filename": schema.StringAttribute{
-				Optional: true,
+				Description: "Persons Database filename. May also be provided via CUSTOM_DATABASE_FILENAME environment variable.",
+				Optional:    true,
 			},
 		},
 	}

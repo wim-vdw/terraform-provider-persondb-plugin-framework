@@ -56,21 +56,24 @@ func (r *PersonResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 			},
 			"person_id": schema.StringAttribute{
-				Required: true,
+				Description: "Person ID in the database.",
+				Required:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"last_name": schema.StringAttribute{
-				Required: true,
+				Description: "Last name of the person.",
+				Required:    true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 30),
 				},
 			},
 			"first_name": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Description: "First name of the person.",
+				Optional:    true,
+				Computed:    true,
+				Default:     stringdefault.StaticString(""),
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
 				},

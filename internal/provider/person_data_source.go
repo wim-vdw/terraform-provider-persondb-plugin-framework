@@ -46,13 +46,16 @@ func (d *PersonDataSource) Schema(_ context.Context, _ datasource.SchemaRequest,
 				Computed: true,
 			},
 			"person_id": schema.StringAttribute{
-				Required: true,
+				Description: "Person ID in the database.",
+				Required:    true,
 			},
 			"last_name": schema.StringAttribute{
-				Computed: true,
+				Description: "Last name of the person.",
+				Computed:    true,
 			},
 			"first_name": schema.StringAttribute{
-				Computed: true,
+				Description: "First name of the person.",
+				Computed:    true,
 			},
 		},
 	}
